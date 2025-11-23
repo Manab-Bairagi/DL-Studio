@@ -15,7 +15,7 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material'
-import { Add, Delete, Visibility, Create, GetApp } from '@mui/icons-material'
+import { Add, Delete, Visibility } from '@mui/icons-material'
 import { keyframes } from '@mui/material/styles'
 import apiClient from '../api/client'
 import { LoadingState } from '../components/LoadingState'
@@ -314,24 +314,7 @@ const DashboardPage = () => {
                       <Visibility fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Edit model">
-                    <IconButton
-                      onClick={() => navigate(`/builder/${model.id}`)}
-                      size="small"
-                      sx={{
-                        color: '#8b5cf6',
-                        border: '1px solid #3f3f3f',
-                        borderRadius: '6px',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          background: 'rgba(139, 92, 246, 0.1)',
-                          borderColor: '#8b5cf6',
-                        },
-                      }}
-                    >
-                      <Create fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+
                   <Tooltip title="Delete model">
                     <IconButton
                       onClick={() => handleDeleteClick(model.id)}

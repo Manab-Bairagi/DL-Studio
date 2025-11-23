@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Typography, Alert } from '@mui/material'
+import { Box, Button, Typography, Alert, SxProps, Theme } from '@mui/material'
 import { ErrorOutline, Refresh } from '@mui/icons-material'
 import { keyframes } from '@mui/material/styles'
 
@@ -30,6 +30,7 @@ interface ErrorStateProps {
     onClick: () => void
   }
   fullScreen?: boolean
+  sx?: SxProps<Theme>
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
@@ -39,6 +40,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   onRetry,
   action,
   fullScreen = false,
+  sx,
 }) => {
   const errorMessage = typeof error === 'string' ? error : error?.message
 
@@ -57,6 +59,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           ? 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%)'
           : 'transparent',
         animation: `${slideUp} 0.4s ease`,
+        ...sx,
       }}
     >
       <Box

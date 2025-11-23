@@ -24,7 +24,7 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material'
-import { Save, Close, Upload, Rocket, ArrowBack, Info } from '@mui/icons-material'
+import { Save, Close, ArrowBack, Info } from '@mui/icons-material'
 import { Node, Edge } from 'reactflow'
 import { keyframes } from '@mui/material/styles'
 import ModelBuilderContainer from '../components/ModelBuilderContainer'
@@ -192,7 +192,7 @@ const ModelBuilderPage = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, minWidth: 'fit-content' }}>
             <Tooltip title="Go back to dashboard">
               <IconButton
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/dashboard')}
                 sx={{
                   color: '#9ca3af',
                   border: '1px solid #3f3f3f',
@@ -480,77 +480,6 @@ const ModelBuilderPage = () => {
               label="Auto-adjust layer configurations when connecting"
               sx={{ mt: 1 }}
             />
-
-            {/* Image Upload */}
-            <Card sx={{ background: 'rgba(59, 130, 246, 0.05)', border: '1px dashed #3b82f6', mt: 2 }}>
-              <CardContent>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, color: '#3b82f6' }}>
-                  📸 Sample Image (Optional)
-                </Typography>
-
-                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                  <InputLabel>Image Type</InputLabel>
-                  <Select
-                    value={numBands === 1 ? 'single' : 'multi'}
-                    onChange={(e) => {
-                      setNumBands(e.target.value === 'single' ? 1 : 3)
-                      setBandFiles([])
-                    }}
-                    label="Image Type"
-                  >
-                    <MenuItem value="single">Single Image</MenuItem>
-                    <MenuItem value="multi">Multi-band (RGB/NIR)</MenuItem>
-                  </Select>
-                </FormControl>
-
-                {numBands === 1 ? (
-                  <>
-                    <input
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      id="image-input"
-                      type="file"
-                      onChange={handleImageSelect}
-                    />
-                    <label htmlFor="image-input">
-                      <Button
-                        variant="outlined"
-                        component="span"
-                        startIcon={<Upload />}
-                        fullWidth
-                      >
-                        Upload Image
-                      </Button>
-                    </label>
-                    {imageFile && (
-                      <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#10b981' }}>
-                        ✓ {imageFile.name}
-                      </Typography>
-                    )}
-                  </>
-                ) : (
-                  <Grid container spacing={1}>
-                    {[0, 1, 2].map((idx) => (
-                      <Grid item xs={12} key={idx}>
-                        <input
-                          accept="image/*"
-                          style={{ display: 'none' }}
-                          id={`band-input-${idx}`}
-                          type="file"
-                          onChange={handleBandSelect(idx)}
-                        />
-                        <label htmlFor={`band-input-${idx}`}>
-                          <Button variant="outlined" component="span" startIcon={<Upload />} size="small" fullWidth>
-                            Band {idx === 0 ? 'R (Red)' : idx === 1 ? 'G (Green)' : 'B (Blue)'}
-                            {bandFiles[idx] ? ' ✓' : ''}
-                          </Button>
-                        </label>
-                      </Grid>
-                    ))}
-                  </Grid>
-                )}
-              </CardContent>
-            </Card>
 
             <TextField
               fullWidth
