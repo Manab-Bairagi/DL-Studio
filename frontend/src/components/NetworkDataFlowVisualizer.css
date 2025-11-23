@@ -1,0 +1,20 @@
+/* Network Data Flow Visualizer Styles */
+
+canvas {
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+/* Smooth animation */
+@keyframes flow {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}

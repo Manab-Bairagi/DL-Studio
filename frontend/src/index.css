@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  display: flex;
+  place-items: stretch;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--primary-dark);
+  color: var(--text-primary);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  text-align: left;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--primary-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--tertiary-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--light-gray);
+}
