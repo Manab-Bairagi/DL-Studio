@@ -11,8 +11,8 @@ import ReactFlow, {
   MiniMap,
   NodeTypes,
 } from 'reactflow'
-import { Box, Toolbar, Button, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Divider } from '@mui/material'
-import { Delete, Undo, Redo, Save, Settings } from '@mui/icons-material'
+import { Box, Toolbar, Button, Tooltip, IconButton } from '@mui/material'
+import { Delete, Undo, Redo, Save, ChevronLeft, ChevronRight } from '@mui/icons-material'
 import LayerNode from './LayerNode'
 import LayerPalette from './LayerPalette'
 import LayerConfigPanel from './LayerConfigPanel'
@@ -25,11 +25,6 @@ interface VisualModelBuilderProps {
   initialNodes?: Node[]
   initialEdges?: Edge[]
   initialInputShape?: number[]
-  outputConfig?: {
-    classes: string[]
-    segmentationClasses: string[]
-  }
-  onOutputConfigChange?: (config: { classes: string[]; segmentationClasses: string[] }) => void
 }
 
 const nodeTypes: NodeTypes = {
@@ -41,15 +36,12 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
   initialNodes = [], 
   initialEdges = [], 
   initialInputShape = [1, 3, 224, 224],
-  outputConfig = { classes: [], segmentationClasses: [] },
-  onOutputConfigChange
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [configOpen, setConfigOpen] = useState(false)
-  const [outputConfigOpen, setOutputConfigOpen] = useState(false)
-  const [tempOutputConfig, setTempOutputConfig] = useState(outputConfig)
+  const [paletteVisible, setPaletteVisible] = useState(true)
   const [layerCounter, setLayerCounter] = useState(() => {
     // Calculate next layer counter from existing nodes
     if (initialNodes.length === 0) return 0
@@ -327,11 +319,38 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
   }, [nodes, edges, onSave])
 
   return (
-    <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
+    <Box sx={{ display: 'flex', height: '100%', width: '100%', position: 'relative' }}>
       {/* Layer Palette */}
-      <Box sx={{ width: '220px', borderRight: '1px solid #ddd' }}>
+      <Box 
+        sx={{ 
+          width: paletteVisible ? '180px' : '0px', 
+          borderRight: paletteVisible ? '1px solid #2a2a2a' : 'none', 
+          background: '#1a1a1a',
+          transition: 'width 0.3s ease',
+          overflow: 'hidden',
+        }}
+      >
         <LayerPalette onDragStart={handleDragStart} />
       </Box>
+      
+      {/* Collapse/Expand Button */}
+      <IconButton
+        onClick={() => setPaletteVisible(!paletteVisible)}
+        sx={{
+          position: 'absolute',
+          left: paletteVisible ? '170px' : '0px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 1000,
+          bgcolor: '#1a1a1a',
+          border: '1px solid #2a2a2a',
+          borderRadius: '0 8px 8px 0',
+          transition: 'left 0.3s ease',
+          '&:hover': { bgcolor: '#262626' },
+        }}
+      >
+        {paletteVisible ? <ChevronLeft /> : <ChevronRight />}
+      </IconButton>
 
       {/* Main Builder Area */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -339,19 +358,22 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
         <Toolbar
           sx={{
             gap: 1,
-            borderBottom: '1px solid #ddd',
-            backgroundColor: '#fafafa',
+            borderBottom: '1px solid #2a2a2a',
+            backgroundColor: '#1a1a1a',
+            minHeight: '48px !important',
+            px: 2,
           }}
         >
           <Tooltip title="Undo (Ctrl+Z)">
             <span>
               <Button
                 size="small"
-                variant="outlined"
+                variant="text"
                 onClick={handleUndo}
                 disabled={historyStep <= 0}
+                sx={{ color: '#aaa', '&:hover': { color: '#fff', background: 'rgba(255,255,255,0.05)' } }}
               >
-                <Undo /> Undo
+                <Undo fontSize="small" sx={{ mr: 0.5 }} /> Undo
               </Button>
             </span>
           </Tooltip>
@@ -360,11 +382,12 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
             <span>
               <Button
                 size="small"
-                variant="outlined"
+                variant="text"
                 onClick={handleRedo}
                 disabled={historyStep >= history.length - 1}
+                sx={{ color: '#aaa', '&:hover': { color: '#fff', background: 'rgba(255,255,255,0.05)' } }}
               >
-                <Redo /> Redo
+                <Redo fontSize="small" sx={{ mr: 0.5 }} /> Redo
               </Button>
             </span>
           </Tooltip>
@@ -375,11 +398,12 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
             <span>
               <Button
                 size="small"
-                variant="outlined"
+                variant="text"
                 color="error"
                 onClick={handleDeleteSelected}
                 disabled={!selectedNodeId}
                 startIcon={<Delete />}
+                sx={{ '&:hover': { background: 'rgba(239, 68, 68, 0.1)' } }}
               >
                 Delete
               </Button>
@@ -388,29 +412,21 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
 
           <Button
             size="small"
-            variant="outlined"
-            onClick={() => {
-              setTempOutputConfig(outputConfig)
-              setOutputConfigOpen(true)
-            }}
-            startIcon={<Settings />}
-            sx={{ mr: 1 }}
-          >
-            Output Config
-          </Button>
-
-          <Button
-            size="small"
             variant="contained"
             onClick={handleSave}
             startIcon={<Save />}
+            sx={{
+              background: '#3b82f6',
+              boxShadow: 'none',
+              '&:hover': { background: '#2563eb', boxShadow: 'none' },
+            }}
           >
             Save Architecture
           </Button>
         </Toolbar>
 
         {/* React Flow Canvas */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, background: '#0f0f0f' }}>
           <ReactFlow
             nodes={nodes.map((n) => ({
               ...n,
@@ -427,10 +443,11 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
             }}
             nodeTypes={nodeTypes}
             fitView
+            proOptions={{ hideAttribution: true }}
           >
-            <Background />
-            <Controls />
-            <MiniMap />
+            <Background color="#2a2a2a" gap={20} />
+            <Controls style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }} />
+            <MiniMap style={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }} nodeColor="#3b82f6" maskColor="rgba(0,0,0,0.6)" />
           </ReactFlow>
         </Box>
       </Box>
@@ -442,72 +459,6 @@ const VisualModelBuilder: React.FC<VisualModelBuilderProps> = ({
         onSave={handleConfigSave}
         previousLayerOutputShape={selectedNode ? getPreviousLayerOutputShape(selectedNode.id) : undefined}
       />
-
-      {/* Output Configuration Dialog */}
-      <Dialog open={outputConfigOpen} onClose={() => setOutputConfigOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' }}>
-          Output Configuration
-        </DialogTitle>
-        <DialogContent sx={{ background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)', pt: 3 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <Box>
-              <Typography variant="subtitle2" sx={{ color: '#3b82f6', mb: 1 }}>Classification Classes</Typography>
-              <TextField
-                fullWidth
-                multiline
-                rows={3}
-                placeholder="cat, dog, bird..."
-                helperText="Comma-separated list of class names"
-                value={tempOutputConfig.classes.join(', ')}
-                onChange={(e) => setTempOutputConfig({
-                  ...tempOutputConfig,
-                  classes: e.target.value.split(',').map(s => s.trim()).filter(s => s)
-                })}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': { borderColor: '#3b82f6' },
-                  }
-                }}
-              />
-            </Box>
-            
-            <Divider sx={{ borderColor: '#3f3f3f' }} />
-
-            <Box>
-              <Typography variant="subtitle2" sx={{ color: '#8b5cf6', mb: 1 }}>Segmentation Categories</Typography>
-              <TextField
-                fullWidth
-                multiline
-                rows={3}
-                placeholder="road, building, tree..."
-                helperText="Comma-separated list of segmentation categories"
-                value={tempOutputConfig.segmentationClasses.join(', ')}
-                onChange={(e) => setTempOutputConfig({
-                  ...tempOutputConfig,
-                  segmentationClasses: e.target.value.split(',').map(s => s.trim()).filter(s => s)
-                })}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': { borderColor: '#8b5cf6' },
-                  }
-                }}
-              />
-            </Box>
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', p: 2 }}>
-          <Button onClick={() => setOutputConfigOpen(false)} variant="outlined">Cancel</Button>
-          <Button 
-            onClick={() => {
-              onOutputConfigChange?.(tempOutputConfig)
-              setOutputConfigOpen(false)
-            }} 
-            variant="contained"
-          >
-            Apply Configuration
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }

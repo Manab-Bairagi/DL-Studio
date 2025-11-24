@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 import {
   Box,
   Container,
   Paper,
   Typography,
   Button,
-  TextField,
   Select,
   MenuItem,
   FormControl,
@@ -27,7 +25,7 @@ import {
   IconButton,
   Divider,
 } from '@mui/material'
-import { Upload, PlayArrow, Download, Refresh, Info } from '@mui/icons-material'
+import { Upload, PlayArrow, Refresh } from '@mui/icons-material'
 import { keyframes } from '@mui/material/styles'
 import apiClient from '../api/client'
 import { inferenceApi, InferenceResponse, ModelConfig } from '../api/inference'
@@ -61,14 +59,7 @@ const fadeInUp = keyframes`
   }
 `
 
-const pulse = keyframes`
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-`
+
 
 interface Model {
   id: string
@@ -182,7 +173,7 @@ const InferencePage = () => {
           variant="h4"
           sx={{
             fontWeight: 700,
-            background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
             backgroundClip: 'text',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -202,21 +193,42 @@ const InferencePage = () => {
           <Paper
             sx={{
               p: 3,
-              background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-              border: '1px solid #3f3f3f',
-              borderRadius: '12px',
+              background: '#1a1a1a',
+              border: '1px solid #2a2a2a',
+              borderRadius: '16px',
               animation: `${fadeInUp} 0.5s ease`,
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
             }}
           >
             {/* Model & Version Selection */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Select Model</InputLabel>
+                  <InputLabel sx={{ color: '#9ca3af' }}>Select Model</InputLabel>
                   <Select
                     value={selectedModel}
                     onChange={(e) => setSelectedModel(e.target.value)}
                     label="Select Model"
+                    sx={{
+                      color: '#fff',
+                      '.MuiOutlinedInput-notchedOutline': { borderColor: '#333' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#f97316' },
+                      '.MuiSvgIcon-root': { color: '#9ca3af' },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#1a1a1a',
+                          border: '1px solid #333',
+                          color: '#fff',
+                          '& .MuiMenuItem-root': {
+                            '&:hover': { bgcolor: '#333' },
+                            '&.Mui-selected': { bgcolor: 'rgba(249, 115, 22, 0.2)' },
+                          },
+                        },
+                      },
+                    }}
                   >
                     {models.length === 0 ? (
                       <MenuItem disabled>No models available</MenuItem>
@@ -233,11 +245,31 @@ const InferencePage = () => {
 
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth disabled={!selectedModel}>
-                  <InputLabel>Select Version</InputLabel>
+                  <InputLabel sx={{ color: '#9ca3af' }}>Select Version</InputLabel>
                   <Select
                     value={selectedVersion}
                     onChange={(e) => setSelectedVersion(e.target.value)}
                     label="Select Version"
+                    sx={{
+                      color: '#fff',
+                      '.MuiOutlinedInput-notchedOutline': { borderColor: '#333' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#f97316' },
+                      '.MuiSvgIcon-root': { color: '#9ca3af' },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          bgcolor: '#1a1a1a',
+                          border: '1px solid #333',
+                          color: '#fff',
+                          '& .MuiMenuItem-root': {
+                            '&:hover': { bgcolor: '#333' },
+                            '&.Mui-selected': { bgcolor: 'rgba(249, 115, 22, 0.2)' },
+                          },
+                        },
+                      },
+                    }}
                   >
                     {versions.map((version) => (
                       <MenuItem key={version.id} value={version.id}>
@@ -249,7 +281,7 @@ const InferencePage = () => {
               </Grid>
             </Grid>
 
-            <Divider sx={{ my: 2, borderColor: '#3f3f3f' }} />
+            <Divider sx={{ my: 2, borderColor: '#333' }} />
 
             {/* Image Upload */}
             <Box sx={{ mb: 3 }}>
@@ -271,11 +303,12 @@ const InferencePage = () => {
                     component="span"
                     startIcon={<Upload />}
                     sx={{
-                      color: '#3b82f6',
-                      borderColor: '#3b82f6',
+                      color: '#f97316',
+                      borderColor: '#f97316',
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        background: 'rgba(59, 130, 246, 0.1)',
+                        background: 'rgba(249, 115, 22, 0.1)',
+                        borderColor: '#ea580c',
                       },
                     }}
                   >
@@ -291,23 +324,27 @@ const InferencePage = () => {
               )}
             </Box>
 
-            <Divider sx={{ my: 2, borderColor: '#3f3f3f' }} />
+            <Divider sx={{ my: 2, borderColor: '#333' }} />
 
             {/* Action Buttons */}
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
               <Tooltip title="Run inference on uploaded image">
                 <Button
                   variant="contained"
-                  startIcon={loading ? <CircularProgress size={20} /> : <PlayArrow />}
+                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <PlayArrow />}
                   onClick={handleRunInference}
                   disabled={loading || !selectedVersion || !imageFile}
                   sx={{
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                    boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)',
                     transition: 'all 0.3s ease',
                     '&:hover:not(:disabled)': {
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 20px rgba(59, 130, 246, 0.5)',
+                      boxShadow: '0 6px 20px rgba(249, 115, 22, 0.5)',
+                    },
+                    '&:disabled': {
+                      background: '#333',
+                      color: '#666',
                     },
                   }}
                 >
@@ -324,7 +361,7 @@ const InferencePage = () => {
                     }}
                     sx={{
                       color: '#9ca3af',
-                      border: '1px solid #3f3f3f',
+                      border: '1px solid #333',
                       borderRadius: '6px',
                       transition: 'all 0.2s ease',
                       '&:hover': {
@@ -357,9 +394,9 @@ const InferencePage = () => {
           <Grid item xs={12} sm={6} md={4}>
             <Card
               sx={{
-                background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-                border: '1px solid #3f3f3f',
-                borderRadius: '12px',
+                background: '#1a1a1a',
+                border: '1px solid #2a2a2a',
+                borderRadius: '16px',
                 animation: `${fadeInUp} 0.5s ease 0.1s both`,
               }}
             >
@@ -375,8 +412,8 @@ const InferencePage = () => {
                     maxHeight: 300,
                     objectFit: 'contain',
                     borderRadius: '8px',
-                    border: '2px solid #3b82f6',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.2)',
+                    border: '2px solid #f97316',
+                    boxShadow: '0 4px 12px rgba(249, 115, 22, 0.2)',
                   }}
                 />
               </CardContent>
@@ -389,9 +426,9 @@ const InferencePage = () => {
           <Grid item xs={12} sm={imagePreview ? 6 : 12} md={imagePreview ? 8 : 12}>
             <Card
               sx={{
-                background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-                border: '1px solid #3f3f3f',
-                borderRadius: '12px',
+                background: '#1a1a1a',
+                border: '1px solid #2a2a2a',
+                borderRadius: '16px',
                 animation: `${fadeInUp} 0.5s ease 0.1s both`,
               }}
             >
@@ -402,21 +439,21 @@ const InferencePage = () => {
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
-                      <TableRow sx={{ '&:hover': { background: 'rgba(59, 130, 246, 0.05)' } }}>
-                        <TableCell sx={{ color: '#9ca3af', fontWeight: 500 }}>Input Shape</TableCell>
-                        <TableCell sx={{ color: '#e5e7eb', fontWeight: 600 }}>
+                      <TableRow sx={{ '&:hover': { background: 'rgba(249, 115, 22, 0.05)' } }}>
+                        <TableCell sx={{ color: '#9ca3af', fontWeight: 500, borderBottom: '1px solid #333' }}>Input Shape</TableCell>
+                        <TableCell sx={{ color: '#e5e7eb', fontWeight: 600, borderBottom: '1px solid #333' }}>
                           {modelConfig.input_shape.join(' × ')}
                         </TableCell>
                       </TableRow>
-                      <TableRow sx={{ '&:hover': { background: 'rgba(59, 130, 246, 0.05)' } }}>
-                        <TableCell sx={{ color: '#9ca3af', fontWeight: 500 }}>Total Parameters</TableCell>
-                        <TableCell sx={{ color: '#e5e7eb', fontWeight: 600 }}>
+                      <TableRow sx={{ '&:hover': { background: 'rgba(249, 115, 22, 0.05)' } }}>
+                        <TableCell sx={{ color: '#9ca3af', fontWeight: 500, borderBottom: '1px solid #333' }}>Total Parameters</TableCell>
+                        <TableCell sx={{ color: '#e5e7eb', fontWeight: 600, borderBottom: '1px solid #333' }}>
                           {modelConfig.total_parameters.toLocaleString()}
                         </TableCell>
                       </TableRow>
-                      <TableRow sx={{ '&:hover': { background: 'rgba(59, 130, 246, 0.05)' } }}>
-                        <TableCell sx={{ color: '#9ca3af', fontWeight: 500 }}>Trainable Parameters</TableCell>
-                        <TableCell sx={{ color: '#e5e7eb', fontWeight: 600 }}>
+                      <TableRow sx={{ '&:hover': { background: 'rgba(249, 115, 22, 0.05)' } }}>
+                        <TableCell sx={{ color: '#9ca3af', fontWeight: 500, borderBottom: 'none' }}>Trainable Parameters</TableCell>
+                        <TableCell sx={{ color: '#e5e7eb', fontWeight: 600, borderBottom: 'none' }}>
                           {modelConfig.trainable_parameters.toLocaleString()}
                         </TableCell>
                       </TableRow>
@@ -434,9 +471,9 @@ const InferencePage = () => {
             <Grid item xs={12}>
               <Card
                 sx={{
-                  background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-                  border: '1px solid #3f3f3f',
-                  borderRadius: '12px',
+                  background: '#1a1a1a',
+                  border: '1px solid #2a2a2a',
+                  borderRadius: '16px',
                   animation: `${fadeInUp} 0.5s ease 0.2s both`,
                 }}
               >
@@ -564,9 +601,9 @@ const InferencePage = () => {
             <Grid item xs={12}>
               <Paper
                 sx={{
-                  background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-                  border: '1px solid #3f3f3f',
-                  borderRadius: '12px',
+                  background: '#1a1a1a',
+                  border: '1px solid #2a2a2a',
+                  borderRadius: '16px',
                   animation: `${fadeInUp} 0.5s ease 0.3s both`,
                 }}
               >
@@ -574,12 +611,15 @@ const InferencePage = () => {
                   value={tabIndex}
                   onChange={(_, newValue) => setTabIndex(newValue)}
                   sx={{
-                    borderBottom: '1px solid #3f3f3f',
+                    borderBottom: '1px solid #333',
                     '& .MuiTab-root': {
                       color: '#9ca3af',
                       '&.Mui-selected': {
-                        color: '#3b82f6',
+                        color: '#f97316',
                       },
+                    },
+                    '& .MuiTabs-indicator': {
+                      backgroundColor: '#f97316',
                     },
                   }}
                 >
@@ -639,33 +679,36 @@ const InferencePage = () => {
                       <TableContainer>
                         <Table size="small">
                           <TableHead>
-                            <TableRow sx={{ background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', borderBottom: '2px solid #3b82f6' }}>
-                              <TableCell sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>Layer</TableCell>
-                              <TableCell sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>Type</TableCell>
-                              <TableCell sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>Output Shape</TableCell>
-                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>
+                            <TableRow sx={{ background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', borderBottom: '2px solid #f97316' }}>
+                              <TableCell sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>Layer</TableCell>
+                              <TableCell sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>Type</TableCell>
+                              <TableCell sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>Output Shape</TableCell>
+                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>
                                 Min
                               </TableCell>
-                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>
+                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>
                                 Max
                               </TableCell>
-                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>
+                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>
                                 Mean
                               </TableCell>
-                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(59, 130, 246, 0.2)' }}>
+                              <TableCell align="right" sx={{ color: '#ffffff', fontWeight: 700, background: 'rgba(249, 115, 22, 0.2)' }}>
                                 Std
                               </TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
                             {inferenceResult.layer_outputs.map((layer, idx) => (
-                              <TableRow key={idx} sx={{ '&:hover': { background: 'rgba(59, 130, 246, 0.05)' } }}>
-                                <TableCell sx={{ color: '#e5e7eb' }}>{layer.layer_name}</TableCell>
-                                <TableCell sx={{ color: '#e5e7eb' }}>{layer.layer_type}</TableCell>
-                                <TableCell sx={{ color: '#e5e7eb' }}>{layer.output_shape.join(' × ')}</TableCell>
-                                <TableCell align="right">
+                              <TableRow key={idx} sx={{ '&:hover': { background: 'rgba(249, 115, 22, 0.05)' } }}>
+                                <TableCell sx={{ color: '#e5e7eb', borderBottom: '1px solid #333' }}>{layer.layer_name}</TableCell>
+                                <TableCell sx={{ color: '#e5e7eb', borderBottom: '1px solid #333' }}>{layer.layer_type}</TableCell>
+                                <TableCell sx={{ color: '#e5e7eb', borderBottom: '1px solid #333' }}>{layer.output_shape.join(' × ')}</TableCell>
+                                <TableCell align="right" sx={{ borderBottom: '1px solid #333' }}>
                                   <StatisticsTooltip
-                                    statistics={[LAYER_STATS_INFO.min]}
+                                    statistics={[{
+                                      ...LAYER_STATS_INFO.min,
+                                      value: layer.activation_stats.min.toFixed(4)
+                                    }]}
                                     children={
                                       <span style={{ color: '#9ca3af', cursor: 'help' }}>
                                         {layer.activation_stats.min.toFixed(4)}
@@ -673,9 +716,12 @@ const InferencePage = () => {
                                     }
                                   />
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell align="right" sx={{ borderBottom: '1px solid #333' }}>
                                   <StatisticsTooltip
-                                    statistics={[LAYER_STATS_INFO.max]}
+                                    statistics={[{
+                                      ...LAYER_STATS_INFO.max,
+                                      value: layer.activation_stats.max.toFixed(4)
+                                    }]}
                                     children={
                                       <span style={{ color: '#9ca3af', cursor: 'help' }}>
                                         {layer.activation_stats.max.toFixed(4)}
@@ -683,9 +729,12 @@ const InferencePage = () => {
                                     }
                                   />
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell align="right" sx={{ borderBottom: '1px solid #333' }}>
                                   <StatisticsTooltip
-                                    statistics={[LAYER_STATS_INFO.mean]}
+                                    statistics={[{
+                                      ...LAYER_STATS_INFO.mean,
+                                      value: layer.activation_stats.mean.toFixed(4)
+                                    }]}
                                     children={
                                       <span style={{ color: '#9ca3af', cursor: 'help' }}>
                                         {layer.activation_stats.mean.toFixed(4)}
@@ -693,9 +742,12 @@ const InferencePage = () => {
                                     }
                                   />
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell align="right" sx={{ borderBottom: '1px solid #333' }}>
                                   <StatisticsTooltip
-                                    statistics={[LAYER_STATS_INFO.std]}
+                                    statistics={[{
+                                      ...LAYER_STATS_INFO.std,
+                                      value: layer.activation_stats.std.toFixed(4)
+                                    }]}
                                     children={
                                       <span style={{ color: '#9ca3af', cursor: 'help' }}>
                                         {layer.activation_stats.std.toFixed(4)}

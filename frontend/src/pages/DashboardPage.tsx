@@ -117,53 +117,33 @@ const DashboardPage = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 4, minHeight: '100vh', background: '#0f0f0f' }}>
       {/* Header Section */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          mb: 4,
+          mb: 5,
           animation: `${slideInLeft} 0.5s ease`,
         }}
       >
         <Box>
           <Typography
-            variant="h4"
+            variant="h3"
             sx={{
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              mb: 0.5,
+              fontWeight: 800,
+              color: '#fff',
+              mb: 1,
+              letterSpacing: '-0.02em',
             }}
           >
-            My Models
+            Dashboard
           </Typography>
-          <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-            Manage and organize your AI models
+          <Typography variant="body1" sx={{ color: '#888' }}>
+            Manage your deep learning models
           </Typography>
         </Box>
-        <Tooltip title="Create a new model">
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => navigate('/builder')}
-            sx={{
-              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 25px rgba(59, 130, 246, 0.6)',
-              },
-            }}
-          >
-            New Model
-          </Button>
-        </Tooltip>
       </Box>
 
       {/* Error Alert */}
@@ -176,185 +156,233 @@ const DashboardPage = () => {
         />
       )}
 
-      {/* Empty State */}
-      {models.length === 0 ? (
+      {/* Bento Grid */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: 3,
+          animation: `${fadeInUp} 0.5s ease`,
+        }}
+      >
+        {/* Create New Model Card (First Bento Box) */}
         <Card
+          onClick={() => navigate('/builder')}
           sx={{
-            background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-            border: '1px solid #3f3f3f',
-            borderRadius: '12px',
-            animation: `${fadeInUp} 0.5s ease`,
-            transition: 'all 0.3s ease',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '2px dashed rgba(255, 255, 255, 0.1)',
+            borderRadius: '28px',
+            height: '100%',
+            minHeight: '280px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
+              background: 'rgba(255, 255, 255, 0.05)',
               borderColor: '#3b82f6',
-              boxShadow: '0 8px 25px rgba(59, 130, 246, 0.2)',
+              transform: 'translateY(-4px)',
             },
           }}
         >
-          <CardContent sx={{ py: 8, textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ color: '#e5e7eb', mb: 1, fontWeight: 600 }}>
-              No models yet
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#9ca3af', mb: 3 }}>
-              Create your first model to get started!
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              onClick={() => navigate('/builder')}
-              sx={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 25px rgba(16, 185, 129, 0.6)',
+          <Box
+            sx={{
+              width: 64,
+              height: 64,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              mb: 2,
+              boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <Add sx={{ color: 'white', fontSize: 32 }} />
+          </Box>
+          <Typography variant="h6" sx={{ color: '#fff', fontWeight: 600 }}>
+            New Model
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#666', mt: 1 }}>
+            Start from scratch
+          </Typography>
+        </Card>
+
+        {/* Model Cards */}
+        {models.map((model, index) => (
+          <Card
+            key={model.id}
+            sx={{
+              background: '#1a1a1a',
+              border: '1px solid #2a2a2a',
+              borderRadius: '28px',
+              height: '100%',
+              minHeight: '280px',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              animation: `${fadeInUp} 0.5s ease`,
+              animationDelay: `${index * 0.05}s`,
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                borderColor: '#333',
+                '& .action-buttons': {
+                  opacity: 1,
+                  transform: 'translateY(0)',
                 },
+              },
+            }}
+          >
+            {/* Card Header / Preview Area */}
+            <Box
+              sx={{
+                p: 3,
+                flex: 1,
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)',
               }}
             >
-              Create Your First Model
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Grid container spacing={3}>
-          {models.map((model, index) => (
-            <Grid item xs={12} sm={6} md={4} key={model.id}>
-              <Card
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                <Box
+                  sx={{
+                    px: 2,
+                    py: 0.8,
+                    borderRadius: '100px',
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    color: '#60a5fa',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {model.model_type}
+                </Box>
+                <Typography variant="caption" sx={{ color: '#555', fontFamily: 'monospace' }}>
+                  v1.0
+                </Typography>
+              </Box>
+
+              <Typography
+                variant="h5"
                 sx={{
-                  background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-                  border: '1px solid #3f3f3f',
-                  borderRadius: '12px',
-                  animation: `${fadeInUp} 0.5s ease`,
-                  animationDelay: `${index * 0.1}s`,
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    transform: 'translateY(-8px)',
-                    borderColor: '#3b82f6',
-                    boxShadow: '0 12px 35px rgba(59, 130, 246, 0.3)',
-                  },
+                  color: '#fff',
+                  fontWeight: 700,
+                  mb: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  lineHeight: 1.2,
                 }}
               >
-                <CardContent sx={{ flex: 1 }}>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="h6"
-                      component="div"
-                      sx={{
-                        fontWeight: 700,
-                        color: '#ffffff',
-                        mb: 0.5,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {model.name}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: 'inline-block',
-                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                        color: 'white',
-                        px: 2,
-                        py: 0.5,
-                        borderRadius: '20px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {model.model_type}
-                    </Box>
-                  </Box>
-                  {model.description && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: '#d1d5db',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                      }}
-                    >
-                      {model.description}
-                    </Typography>
-                  )}
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: 'block',
-                      color: '#6b7280',
-                      mt: 2,
-                    }}
-                  >
-                    Created: {new Date(model.created_at).toLocaleDateString()}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ pt: 0, gap: 1 }}>
-                  <Tooltip title="View model">
-                    <IconButton
-                      onClick={() => navigate(`/model/${model.id}`)}
-                      size="small"
-                      sx={{
-                        color: '#3b82f6',
-                        border: '1px solid #3f3f3f',
-                        borderRadius: '6px',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          background: 'rgba(59, 130, 246, 0.1)',
-                          borderColor: '#3b82f6',
-                        },
-                      }}
-                    >
-                      <Visibility fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                {model.name}
+              </Typography>
 
-                  <Tooltip title="Delete model">
-                    <IconButton
-                      onClick={() => handleDeleteClick(model.id)}
-                      size="small"
-                      sx={{
-                        color: '#ef4444',
-                        border: '1px solid #3f3f3f',
-                        borderRadius: '6px',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          borderColor: '#ef4444',
-                        },
-                      }}
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#888',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  lineHeight: 1.6,
+                }}
+              >
+                {model.description || 'No description provided.'}
+              </Typography>
+            </Box>
+
+            {/* Card Footer */}
+            <Box
+              sx={{
+                p: 3,
+                pt: 0,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderTop: '1px solid #222',
+                mt: 'auto',
+                background: '#1a1a1a',
+              }}
+            >
+              <Typography variant="caption" sx={{ color: '#444' }}>
+                {new Date(model.created_at).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </Typography>
+
+              <Box
+                className="action-buttons"
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                  opacity: 0.6,
+                  transform: 'translateY(4px)',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <IconButton
+                  onClick={() => navigate(`/model/${model.id}`)}
+                  size="small"
+                  sx={{
+                    color: '#fff',
+                    background: 'rgba(255,255,255,0.1)',
+                    '&:hover': { background: '#3b82f6' },
+                  }}
+                >
+                  <Visibility fontSize="small" />
+                </IconButton>
+                <IconButton
+                  onClick={() => handleDeleteClick(model.id)}
+                  size="small"
+                  sx={{
+                    color: '#fff',
+                    background: 'rgba(255,255,255,0.1)',
+                    '&:hover': { background: '#ef4444' },
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
+          </Card>
+        ))}
+      </Box>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} maxWidth="sm">
-        <DialogTitle sx={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', fontWeight: 700 }}>
-          Delete Model
-        </DialogTitle>
-        <DialogContent sx={{ background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)', pt: 3 }}>
-          <Typography sx={{ color: '#e5e7eb' }}>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            borderRadius: '24px',
+            padding: 1,
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: '#fff', fontWeight: 700 }}>Delete Model</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: '#aaa' }}>
             Are you sure you want to delete this model? This action cannot be undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)', p: 2, gap: 1 }}>
+        <DialogActions sx={{ p: 2 }}>
           <Button
             onClick={() => setDeleteDialogOpen(false)}
-            variant="outlined"
-            disabled={deleting}
+            sx={{ color: '#888', '&:hover': { color: '#fff' } }}
           >
             Cancel
           </Button>
@@ -362,15 +390,10 @@ const DashboardPage = () => {
             onClick={handleConfirmDelete}
             variant="contained"
             color="error"
-            disabled={deleting}
             sx={{
-              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
-              transition: 'all 0.3s ease',
-              '&:hover:not(:disabled)': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(239, 68, 68, 0.5)',
-              },
+              borderRadius: '12px',
+              textTransform: 'none',
+              fontWeight: 600,
             }}
           >
             {deleting ? 'Deleting...' : 'Delete'}

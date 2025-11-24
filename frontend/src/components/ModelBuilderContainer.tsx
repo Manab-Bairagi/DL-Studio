@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react'
 import { Node, Edge } from 'reactflow'
 import {
   Box,
-  Toolbar,
   Button,
   Tooltip,
   IconButton,
@@ -19,6 +18,7 @@ import {
   Save,
   Refresh,
   Info,
+  NoteAdd,
 } from '@mui/icons-material'
 import VisualModelBuilder from './VisualModelBuilder'
 import { useUndoRedo } from '../hooks/useUndoRedo'
@@ -37,23 +37,18 @@ const slideDown = keyframes`
 
 interface ModelBuilderContainerProps {
   onSave: (nodes: Node[], edges: Edge[]) => void
+  onNew?: () => void
   initialNodes?: Node[]
   initialEdges?: Edge[]
   initialInputShape?: number[]
-  outputConfig?: {
-    classes: string[]
-    segmentationClasses: string[]
-  }
-  onOutputConfigChange?: (config: { classes: string[]; segmentationClasses: string[] }) => void
 }
 
 export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
   onSave,
+  onNew,
   initialNodes = [],
   initialEdges = [],
   initialInputShape = [1, 3, 224, 224],
-  outputConfig,
-  onOutputConfigChange,
 }) => {
   const [infoOpen, setInfoOpen] = useState(false)
   const [lastSavedState, setLastSavedState] = useState({ nodes: initialNodes, edges: initialEdges })
@@ -78,29 +73,52 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
   const isEmpty = state.nodes.length === 0
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 140px)' }}>
-      {/* Enhanced Toolbar */}
-      <Toolbar
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 90px)', gap: 1 }}>
+      {/* Compact Toolbar */}
+      <Box
         sx={{
-          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-          borderBottom: '1px solid #3f3f3f',
-          borderRadius: '8px 8px 0 0',
-          mb: 1,
-          gap: 1,
-          animation: `${slideDown} 0.4s ease`,
+          background: '#1a1a1a',
+          border: '1px solid #2a2a2a',
+          borderRadius: '10px',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
-          padding: '12px 16px',
+          padding: '6px 16px',
           minHeight: 'auto',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
         }}
       >
         {/* Title */}
-        <Typography variant="h6" sx={{ fontWeight: 600, color: '#ffffff', flex: 1, minWidth: 'fit-content' }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#ffffff', flex: 1, minWidth: 'fit-content', fontSize: '0.9rem' }}>
           Visual Model Builder
         </Typography>
 
-        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#3f3f3f', mx: 1 }} />
+        <Divider orientation="vertical" sx={{ height: 24, borderColor: '#333', mx: 1.5 }} />
+
+        {/* New Model Button */}
+        {onNew && (
+          <>
+            <Tooltip title="New Model">
+              <IconButton
+                size="small"
+                onClick={onNew}
+                sx={{
+                  color: '#10b981',
+                  border: '1px solid #333',
+                  borderRadius: '8px',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderColor: '#10b981',
+                  },
+                }}
+              >
+                <NoteAdd fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Divider orientation="vertical" sx={{ height: 24, borderColor: '#333', mx: 1.5 }} />
+          </>
+        )}
 
         {/* Undo/Redo */}
         <Tooltip title="Undo (Ctrl+Z)">
@@ -110,9 +128,9 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
               onClick={undo}
               disabled={!canUndo}
               sx={{
-                color: canUndo ? '#3b82f6' : '#757575',
-                border: '1px solid #3f3f3f',
-                borderRadius: '6px',
+                color: canUndo ? '#3b82f6' : '#555',
+                border: '1px solid #333',
+                borderRadius: '8px',
                 transition: 'all 0.3s ease',
                 '&:hover:not(:disabled)': {
                   background: 'rgba(59, 130, 246, 0.1)',
@@ -132,9 +150,10 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
               onClick={redo}
               disabled={!canRedo}
               sx={{
-                color: canRedo ? '#8b5cf6' : '#757575',
-                border: '1px solid #3f3f3f',
-                borderRadius: '6px',
+                color: canRedo ? '#8b5cf6' : '#555',
+                border: '1px solid #333',
+                borderRadius: '8px',
+                ml: 1,
                 transition: 'all 0.3s ease',
                 '&:hover:not(:disabled)': {
                   background: 'rgba(139, 92, 246, 0.1)',
@@ -147,7 +166,7 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
           </span>
         </Tooltip>
 
-        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#3f3f3f', mx: 1 }} />
+        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#333', mx: 2 }} />
 
         {/* Reset Button */}
         <Tooltip title="Reset to initial state">
@@ -156,9 +175,9 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
             onClick={handleReset}
             disabled={isEmpty}
             sx={{
-              color: isEmpty ? '#757575' : '#f97316',
-              border: '1px solid #3f3f3f',
-              borderRadius: '6px',
+              color: isEmpty ? '#555' : '#f97316',
+              border: '1px solid #333',
+              borderRadius: '8px',
               transition: 'all 0.3s ease',
               '&:hover:not(:disabled)': {
                 background: 'rgba(249, 115, 22, 0.1)',
@@ -170,7 +189,7 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
           </IconButton>
         </Tooltip>
 
-        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#3f3f3f', mx: 1 }} />
+        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#333', mx: 2 }} />
 
         {/* Info Button */}
         <Tooltip title="Model information">
@@ -179,8 +198,8 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
             onClick={() => setInfoOpen(true)}
             sx={{
               color: '#3b82f6',
-              border: '1px solid #3f3f3f',
-              borderRadius: '6px',
+              border: '1px solid #333',
+              borderRadius: '8px',
               transition: 'all 0.3s ease',
               '&:hover': {
                 background: 'rgba(59, 130, 246, 0.1)',
@@ -192,7 +211,7 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
           </IconButton>
         </Tooltip>
 
-        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#3f3f3f', mx: 1 }} />
+        <Divider orientation="vertical" sx={{ height: 28, borderColor: '#333', mx: 2 }} />
 
         {/* Save Button */}
         <Tooltip title={isSaved ? 'All changes saved' : 'Save model'}>
@@ -205,11 +224,14 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
               background: isSaved
                 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
                 : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              boxShadow: `0 4px 12px ${isSaved ? 'rgba(16, 185, 129, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
+              boxShadow: 'none',
+              borderRadius: '8px',
+              textTransform: 'none',
+              fontWeight: 600,
               transition: 'all 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
-                boxShadow: `0 6px 20px ${isSaved ? 'rgba(16, 185, 129, 0.5)' : 'rgba(59, 130, 246, 0.5)'}`,
+                boxShadow: `0 6px 20px ${isSaved ? 'rgba(16, 185, 129, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
               },
             }}
           >
@@ -219,21 +241,19 @@ export const ModelBuilderContainer: React.FC<ModelBuilderContainerProps> = ({
 
         {/* Status Indicator */}
         {!isSaved && (
-          <Typography variant="caption" sx={{ color: '#f97316', ml: 1, fontWeight: 500 }}>
+          <Typography variant="caption" sx={{ color: '#f97316', ml: 2, fontWeight: 500 }}>
             Unsaved changes
           </Typography>
         )}
-      </Toolbar>
+      </Box>
 
       {/* Builder Canvas */}
-      <Box sx={{ flex: 1, borderRadius: '0 0 8px 8px', overflow: 'hidden', border: '1px solid #3f3f3f', background: '#0f0f0f' }}>
+      <Box sx={{ flex: 1, borderRadius: '16px', overflow: 'hidden', border: '1px solid #2a2a2a', background: '#0f0f0f', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
         <VisualModelBuilder
           onSave={handleModelChange}
           initialNodes={state.nodes}
           initialEdges={state.edges}
           initialInputShape={initialInputShape}
-          outputConfig={outputConfig}
-          onOutputConfigChange={onOutputConfigChange}
         />
       </Box>
 
