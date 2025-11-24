@@ -116,6 +116,61 @@ DL Studio is an open project, and we are actively looking for contributors to he
 
 Check out our [Issues](https://github.com/your-repo/issues) page for open tasks!
 
+---
+
+## 🔮 Future Plans
+
+We have an exciting roadmap ahead! Here are the key features and integrations planned for future releases:
+
+### 🎯 Priority Features
+
+*   **Kaggle & Colab Integration**: Seamlessly train your visually designed models on cloud platforms:
+    *   **One-Click Export**: Export models directly to Jupyter notebooks compatible with Kaggle and Google Colab.
+    *   **Cloud Training**: Configure and launch training jobs on Kaggle kernels or Colab environments.
+    *   **Dataset Integration**: Connect to Kaggle datasets or upload custom datasets for training.
+    *   **Progress Monitoring**: Real-time training metrics and visualization from cloud environments.
+
+*   **Enhanced Visualization Suite**:
+    *   **Training Metrics Dashboard**: Real-time loss/accuracy curves, learning rate schedules.
+    *   **Model Comparison**: Side-by-side comparison of different model architectures.
+    *   **3D Architecture Visualization**: Interactive 3D rendering of complex network structures.
+    *   **Attention Mechanism Visualization**: For Transformer and attention-based models.
+
+*   **Advanced Model Building**:
+    *   **Pre-trained Model Hub**: Import and fine-tune popular pre-trained models (ResNet, VGG, EfficientNet, etc.).
+    *   **Custom Layer Support**: Define and integrate custom PyTorch layers.
+    *   **Transfer Learning Workflow**: Visual tools for freezing/unfreezing layers.
+    *   **Multi-Modal Models**: Support for vision-language and multi-input architectures.
+
+### 🚀 Deployment & Production
+
+*   **Model Deployment Tools**:
+    *   **ONNX Export**: Convert models to ONNX format for cross-platform deployment.
+    *   **TorchScript Export**: Optimized model export for production environments.
+    *   **API Generation**: Auto-generate FastAPI endpoints for trained models.
+    *   **Docker Containerization**: One-click Docker image creation for model serving.
+
+*   **Performance Optimization**:
+    *   **Model Quantization**: Tools for INT8 quantization and model compression.
+    *   **Pruning Utilities**: Visual pruning interface to reduce model size.
+    *   **Benchmark Suite**: Compare model performance across different hardware.
+
+### 📚 Educational & Collaboration
+
+*   **Tutorial System**: Interactive guided tutorials for common architectures (CNN, RNN, Transformer).
+*   **Team Collaboration**: Share models, fork architectures, and collaborate with teams.
+*   **Model Templates**: Pre-built architecture templates for common tasks (image classification, object detection, segmentation).
+*   **Documentation Generator**: Auto-generate model documentation and architecture diagrams.
+
+### 🔧 Infrastructure Improvements
+
+*   **TensorFlow/Keras Support**: Dual framework support alongside PyTorch.
+*   **Dataset Manager**: Built-in dataset versioning and preprocessing workflows.
+*   **Experiment Tracking**: Integration with MLflow, Weights & Biases.
+*   **GPU Resource Management**: Monitor and optimize GPU usage during local development.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.
